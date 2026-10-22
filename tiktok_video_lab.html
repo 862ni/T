@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101014">
+<title>TikTok Video Lab</title>
+<style>
+:root{color-scheme:dark;--bg:#101014;--panel:#1b1b22;--line:#34343f;--pink:#fe2c55;--cyan:#25f4ee;--text:#f7f7fb;--muted:#b8b8c6}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#18131c,#101014 48%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding:20px 14px 44px}
+main{max-width:760px;margin:auto}.brand{display:flex;align-items:center;gap:10px;margin:8px 0 22px}.logo{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,var(--cyan),var(--pink));display:grid;place-items:center;color:#101014;font-size:24px;font-weight:900}.brand h1{font-size:22px;margin:0}.brand p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.card{background:rgba(27,27,34,.94);border:1px solid var(--line);border-radius:18px;padding:17px;margin:13px 0}.card h2{font-size:17px;margin:0 0 13px}.hint{color:var(--muted);font-size:13px;line-height:1.7}
+.filebox{border:1px dashed #666678;border-radius:14px;padding:18px;text-align:center}.filebox input{max-width:100%;margin-top:10px}
+label{display:block;font-size:13px;color:var(--muted);margin:12px 0 6px}select,input[type=number],input[type=text]{width:100%;padding:12px;border-radius:10px;background:#111116;color:var(--text);border:1px solid #41414d;font-size:15px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.btn{border:0;border-radius:12px;padding:14px 16px;font-size:15px;font-weight:750;width:100%;background:var(--pink);color:white;margin-top:12px}.btn.secondary{background:#30303a}.btn:disabled{opacity:.45}
+progress{width:100%;height:12px;accent-color:var(--cyan);margin-top:12px}#status{white-space:pre-wrap;line-height:1.6;font-size:13px;color:var(--cyan);margin-top:10px}video{width:100%;max-height:340px;background:#000;border-radius:12px;margin-top:12px}a.download{display:none;display:inline-block;background:var(--cyan);color:#101014;font-weight:800;text-decoration:none;padding:12px 18px;border-radius:10px;margin-top:12px}
+.warning{border-right:3px solid #ffbe55;padding-right:10px;color:#f8dba8}.foot{color:#9292a2;font-size:12px;line-height:1.7;text-align:center;margin-top:18px}
+@media(max-width:420px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body><main>
+<header class="brand"><div class="logo">▶</div><div><h1>TikTok Video Lab</h1><p>أداة تجهيز الفيديو — تعمل داخل المتصفح</p></div></header>
+<section class="card"><h2>١) اختر الفيديو</h2><div class="filebox"><div>اختر مقطعًا من الصور أو الملفات</div><input id="file" type="file" accept="video/*"></div><div id="fileInfo" class="hint"></div><video id="preview" controls playsinline hidden></video></section>
+<section class="card"><h2>٢) إعدادات التصدير</h2><div class="grid">
+<div><label for="size">المقاس</label><select id="size"><option value="keep">الإبقاء على المقاس الأصلي</option><option value="1080x1920">عمودي 1080 × 1920 (9:16)</option><option value="720x1280">عمودي 720 × 1280 (9:16)</option><option value="square">مربع 1080 × 1080</option></select></div>
+<div><label for="fps">معدل الإطارات</label><select id="fps"><option value="keep">الأصلي</option><option value="30">30 FPS</option><option value="60">60 FPS</option><option value="120">120 FPS*</option></select></div>
+<div><label for="quality">الجودة / حجم الملف</label><select id="quality"><option value="18">جودة عالية (ملف أكبر)</option><option value="23" selected>متوازنة</option><option value="28">حجم أصغر (فقد جودة أكبر)</option><option value="lossless">محاولة دون فقد مرئي (ملف كبير جدًا)</option></select></div>
+<div><label for="audio">الصوت</label><select id="audio"><option value="copy">الحفاظ على الصوت</option><option value="mute">كتم الصوت</option></select></div>
+</div><p class="hint">* اختيار 120 FPS لا يخلق تفاصيل حركة غير موجودة في المصدر، وقد لا يكون متاحًا أو مناسبًا على كل جهاز.</p>
+<button class="btn" id="process">معالجة الفيديو</button><progress id="progress" value="0" max="1" hidden></progress><div id="status">اختر فيديو ثم عدّل الإعدادات واضغط «معالجة الفيديو».</div><a id="download" class="download" download="tiktok-ready.mp4">تنزيل الفيديو الناتج</a></section>
+<section class="card"><h2>مهم قبل الاستخدام</h2><p class="hint warning">المعالجة تتم محليًا في المتصفح بعد تحميل محرك المعالجة من شبكة الإنترنت؛ الفيديو نفسه لا يُرفع إلى خادم هذه الصفحة. لا تغلق سفاري أثناء المعالجة.</p><p class="hint">هذا نموذج أولي مجاني: القص الدقيق، الفلاتر، Auto Post، وميزات الحسابات ليست مضافة بعد. النشر التلقائي يحتاج تكاملًا رسميًا وموافقات تيك توك.</p></section>
+<p class="foot">TikTok Video Lab — أداة مستقلة غير تابعة لتيك توك أو CompressBase.</p>
+</main>
+<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
+<script>
+const fileEl=document.getElementById('file'), info=document.getElementById('fileInfo'), preview=document.getElementById('preview'), btn=document.getElementById('process'), statusEl=document.getElementById('status'), prog=document.getElementById('progress'), dl=document.getElementById('download');
+let selected=null, ffmpeg=null, busy=false;
+const fmt=n=>n<1024*1024?(n/1024).toFixed(0)+' KB':(n/1024/1024).toFixed(1)+' MB';
+fileEl.addEventListener('change',()=>{
+ selected=fileEl.files&&fileEl.files[0]; dl.style.display='none'; preview.hidden=true;
+ if(!selected){info.textContent='';return}
+ info.textContent=selected.name+' — '+fmt(selected.size);
+ preview.src=URL.createObjectURL(selected);preview.hidden=false;
+ statusEl.textContent='تم اختيار الفيديو. الإعدادات جاهزة.';
+});
+function setStatus(s){statusEl.textContent=s}
+btn.addEventListener('click',async()=>{
+ if(busy)return;if(!selected){setStatus('اختر فيديو أولًا.');return}
+ if(!window.FFmpeg||!window.FFmpeg.createFFmpeg){setStatus('تعذر تحميل محرك المعالجة. جرّب تحديث الصفحة أو استخدام مقطع أصغر.');return}
+ busy=true;btn.disabled=true;dl.style.display='none';prog.hidden=false;prog.value=0;
+ try{
+  if(!ffmpeg){
+   setStatus('جارٍ تحميل محرك المعالجة (قد يستغرق بعض الوقت)...');
+   ffmpeg=FFmpeg.createFFmpeg({log:false,corePath:'https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js',progress:({ratio})=>{if(Number.isFinite(ratio))prog.value=Math.max(0,Math.min(1,ratio));}});
+   await ffmpeg.load();
+  }
+  setStatus('جارٍ تجهيز الملف...');
+  const ext=(selected.name.split('.').pop()||'mp4').toLowerCase().replace(/[^a-z0-9]/g,'');
+  const inputName='input.'+ext;
+  ffmpeg.FS('writeFile',inputName,new Uint8Array(await selected.arrayBuffer()));
+  const args=['-i',inputName,'-map','0:v:0','-map','0:a?'];
+  const size=document.getElementById('size').value;
+  if(size==='square')args.push('-vf','scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:(ow-iw)/2:(oh-ih)/2');
+  else if(size!=='keep')args.push('-vf','scale='+size.replace('x',':')+':force_original_aspect_ratio=decrease,pad='+size.replace('x',':')+':(ow-iw)/2:(oh-ih)/2');
+  const fps=document.getElementById('fps').value;if(fps!=='keep')args.push('-r',fps);
+  const q=document.getElementById('quality').value;
+  if(q==='lossless')args.push('-c:v','libx264','-crf','0','-preset','ultrafast');
+  else args.push('-c:v','libx264','-crf',q,'-preset','ultrafast');
+  if(document.getElementById('audio').value==='mute')args.push('-an');else args.push('-c:a','aac','-b:a','192k');
+  args.push('-movflags','+faststart','output.mp4');
+  setStatus('جارٍ المعالجة. قد يكون بطيئًا على الآيفون؛ اترك الصفحة مفتوحة.');
+  await ffmpeg.run(...args);
+  const data=ffmpeg.FS('readFile','output.mp4');
+  const url=URL.createObjectURL(new Blob([data.buffer],{type:'video/mp4'}));
+  dl.href=url;dl.style.display='inline-block';dl.download='tiktok-ready.mp4';
+  setStatus('اكتملت المعالجة. اضغط «تنزيل الفيديو الناتج». الحجم: '+fmt(data.length));
+  try{ffmpeg.FS('unlink',inputName);ffmpeg.FS('unlink','output.mp4')}catch(e){}
+ }catch(e){setStatus('تعذرت المعالجة على هذا المتصفح أو الملف.\nالتفاصيل: '+(e&&e.message?e.message:String(e))+'\nجرّب مقطعًا أقصر أو أصغر، وتأكد من اتصال الإنترنت.');}
+ finally{busy=false;btn.disabled=false;}
+});
+</script></body></html>
